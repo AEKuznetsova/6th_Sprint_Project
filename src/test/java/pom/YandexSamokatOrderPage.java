@@ -61,16 +61,28 @@ public class YandexSamokatOrderPage {
         driver.findElement(nameTexfield).sendKeys(newName);
     }
 
+    public By getNameTextfield() {
+        return nameTexfield;
+    }
+
     // Заполнить поле "Фамилия" параметром
     public void setLastName(String newLastName) {
         clearTextfield(lastNameTextfield);
         driver.findElement(lastNameTextfield).sendKeys(newLastName);
     }
 
+    public By getLastNameTextfield() {
+        return lastNameTextfield;
+    }
+
     // Заполнить поле "Адрес" параметром
     public void setAddress(String newAddress) {
         clearTextfield(addressTextfield);
         driver.findElement(addressTextfield).sendKeys(newAddress);
+    }
+
+    public By getAddressTextfield() {
+        return addressTextfield;
     }
 
     // Выбрать станцию метро
@@ -80,10 +92,18 @@ public class YandexSamokatOrderPage {
         driver.findElement(firstMetroStation).click();
     }
 
+    public By getMetroStationTextfield() {
+        return metroStationTextfield;
+    }
+
     // Заполнить поле "Телефон" параметром
     public void setPhoneNumber(String newPhoneNumber) {
         clearTextfield(phoneNumberTextfield);
         driver.findElement(phoneNumberTextfield).sendKeys(newPhoneNumber);
+    }
+
+    public By getPhoneNumberTextfield() {
+        return phoneNumberTextfield;
     }
 
     // Нажать кнопку "Далее"
