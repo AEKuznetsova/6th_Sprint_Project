@@ -3,6 +3,10 @@ package pom;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 // Класс шапки главной страницы Яндекс Самокат
 public class YandexSamokatPageHeader {
@@ -45,6 +49,8 @@ public class YandexSamokatPageHeader {
 
         // Нажать на кнопку "Go!" после ввода номера заказа
         public void clickGoButton() {
+            new WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.elementToBeClickable(goButton));
             driver.findElement(goButton).click();
         }
 }

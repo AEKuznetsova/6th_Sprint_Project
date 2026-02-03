@@ -1,6 +1,7 @@
 package pom;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import static org.openqa.selenium.support.locators.RelativeLocator.with;
@@ -24,6 +25,7 @@ public class YandexSamokatHomePage {
 
     // Нажать на выпадающий список
     public void clickDropdownList() {
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", getDropdownListPoint());
         getDropdownListPoint().click();
     }
 
