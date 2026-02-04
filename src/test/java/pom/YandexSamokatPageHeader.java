@@ -21,6 +21,8 @@ public class YandexSamokatPageHeader {
         private By orderStatusButton = By.className("Header_Link__1TAG7");
         // Кнопка "Go!"
         private By goButton = By.xpath("//button[contains(@class,'Header_Button__28dPO')]");
+        // Текстовое поле "Введите номер заказа"
+        private By orderNumberTextfield = By.tagName("input");
 
         public YandexSamokatPageHeader(WebDriver driver) {
             this.driver = driver;
@@ -51,7 +53,14 @@ public class YandexSamokatPageHeader {
         public void clickGoButton() {
             new WebDriverWait(driver, Duration.ofSeconds(3))
                     .until(ExpectedConditions.elementToBeClickable(goButton));
+            enterOrderNumber(12345);
             driver.findElement(goButton).click();
+        }
+
+        // Ввести номер заказа
+        private void enterOrderNumber(int orderNumber) {
+            driver.findElement(orderNumberTextfield).clear();
+            driver.findElement(orderNumberTextfield).sendKeys(String.valueOf(orderNumber));
         }
 }
 
