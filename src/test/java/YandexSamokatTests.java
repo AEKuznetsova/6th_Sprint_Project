@@ -5,10 +5,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import pom.YandexSamokatHomePage;
-import pom.YandexSamokatOrderPage;
-import pom.YandexSamokatOrderTrackingPage;
-import pom.YandexSamokatPageHeader;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import pom.*;
 import testData.TestUser;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,6 +30,8 @@ public class YandexSamokatTests {
     private YandexSamokatOrderPage objOrderPage;
     // Страница поиска заказа
     private YandexSamokatOrderTrackingPage objTrackOrderPage;
+    // Секция принятия cookies
+    private YandexSamokatCookiesSection objCookiesSection;
 
     @BeforeEach
     public void setUp() {
@@ -40,13 +40,16 @@ public class YandexSamokatTests {
         driver = new ChromeDriver();
         // Mozilla Firefox
 //        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.get(MAIN_PAGE);
+        objCookiesSection = new YandexSamokatCookiesSection(driver);
+        objCookiesSection.acceptCookies();
     }
 
     @ParameterizedTest
     @MethodSource("testData.ParameterizedTestData#dropdownListData")
     @DisplayName("Тест проверяет, что когда нажимаешь на стрелочку, открывается соответствующий текст.")
     void dropdownListPointTest(String dropdownListQuestion, String expectedResult) {
-        driver.get(MAIN_PAGE);
         objHomePage = new YandexSamokatHomePage(driver, dropdownListQuestion);
         objHomePage.clickDropdownList();
 
@@ -57,7 +60,6 @@ public class YandexSamokatTests {
     @MethodSource("testData.ParameterizedTestData#userTestData")
     @DisplayName("Тест делает заказ через кнопку \"Заказать\" в шапке сайта")
     void makeOrderWithHigherOrderButton(TestUser user) {
-        driver.get(MAIN_PAGE);
         objPageHeader = new YandexSamokatPageHeader(driver);
         objPageHeader.clickMakeOrderButton();
         objOrderPage = new YandexSamokatOrderPage(driver);
@@ -75,7 +77,6 @@ public class YandexSamokatTests {
     @MethodSource("testData.ParameterizedTestData#userTestData")
     @DisplayName("Тест делает заказ через кнопку \"Заказать\", расположенную внизу")
     void makeOrderWithLowerOrderButton(TestUser user) {
-        driver.get(MAIN_PAGE);
         objHomePage = new YandexSamokatHomePage(driver, "");
         objHomePage.clickMakeOrderButton();
 
@@ -106,14 +107,14 @@ public class YandexSamokatTests {
     @Test
     @DisplayName("Если нажать на логотип Яндекса, в новом окне откроется главная страница Яндекса")
     void redirectToYandexMainPage() {
-        driver.get(MAIN_PAGE);
-
         objPageHeader = new YandexSamokatPageHeader(driver);
         objPageHeader.clickHeaderYandexLogoTitle();
 
         Set<String> windowIds = driver.getWindowHandles();
         ArrayList<String> tabs = new ArrayList<>(windowIds);
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(driver -> (driver.switchTo().window(tabs.get(1))));
+        driver.switchTo().window(tabs.get(1));
+        new WebDriverWait(driver, Duration.ofSeconds(3))
+                .until(ExpectedConditions.urlContains(YANDEX_PAGE));
 
         assertTrue(Objects.requireNonNull(driver.getCurrentUrl()).contains(YANDEX_PAGE),
                 "Переход на главную страницу Яндекс не выполнен");
@@ -149,7 +150,7 @@ public class YandexSamokatTests {
         driver.get(ORDER_PAGE);
 
         objOrderPage = new YandexSamokatOrderPage(driver);
-        objOrderPage.setAddress("");
+        objOrderPage.setAddress("1");
         objOrderPage.clickFurtherButton();
 
         assertEquals(ERROR_MESSAGE_ADDRESS, objOrderPage.getErrorMessageText(objOrderPage.getAddressTextfield()),
@@ -176,16 +177,13 @@ public class YandexSamokatTests {
         objOrderPage = new YandexSamokatOrderPage(driver);
         objOrderPage.clickFurtherButton();
 
-        assertEquals(ERROR_MESSAGE_PHONE_NUMBER,
-                objOrderPage.getErrorMessageText(objOrderPage.getPhoneNumberTextfield()),
+        assertEquals(ERROR_MESSAGE_PHONE_NUMBER, objOrderPage.getErrorMessageText(objOrderPage.getPhoneNumberTextfield()),
                 "Текст ошибки не соответствует ожидаемому");
     }
 
     @Test
     @DisplayName("Если ввести неправильный номер заказа, попадёшь на страницу ошибки")
     void checkErrorImageOnTrackingPage() {
-        driver.get(MAIN_PAGE);
-
         objPageHeader = new YandexSamokatPageHeader(driver);
         objPageHeader.clickOrderStatusButton();
         objPageHeader.clickGoButton();
